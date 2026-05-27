@@ -1,6 +1,8 @@
 ## 1. Criar o pacote
 usethis::create_package("decisionLab")
 
+usethis::use_github()
+
 
 # Mover suas funções para: decisionLab/R/
 
@@ -106,3 +108,23 @@ usethis::use_readme_rmd()
 ## 1. Verificar Git
 #     No RStudio console:
 usethis::git_sitrep()
+
+
+# configurar um novo token GitHub;
+# inicializar o repositório Git local;
+# conectar ao GitHub.
+
+
+## 1. Criar novo token GitHub
+usethis::create_github_token()
+
+gitcreds::gitcreds_set()
+
+
+usethis::git_sitrep()
+# Ok
+
+usethis::use_git()
+
+
+# devtools::install_github("alessand22/decisionLab")
