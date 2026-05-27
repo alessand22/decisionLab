@@ -62,53 +62,17 @@ swara_weights <- function(criteria_order,
   # 0) Validações
   # -----------------------------
 
-  if (is.null(criteria_order)) {
-    stop("'criteria_order' cannot be NULL")
-  }
-
-  if (!is.vector(criteria_order)) {
-    stop("'criteria_order' must be a vector")
-  }
-
-  criteria_order <- as.character(criteria_order)
+  criteria_order <- .validate_criteria_order(
+    criteria_order
+  )
 
   n_criteria <- length(criteria_order)
 
-  if (n_criteria < 2) {
-    stop("At least two criteria are required")
-  }
-
-  if (!is.numeric(comparative_importance)) {
-    stop("'comparative_importance' must be numeric")
-  }
-
-  if (length(comparative_importance) != n_criteria) {
-    stop(
-      paste(
-        "length of 'comparative_importance'",
-        "must equal number of criteria"
-      )
+  comparative_importance <-
+    .validate_comparative_importance(
+      comparative_importance = comparative_importance,
+      n_criteria = n_criteria
     )
-  }
-
-  if (any(is.na(comparative_importance))) {
-    stop(
-      "'comparative_importance' contains NA values"
-    )
-  }
-
-  if (any(comparative_importance < 0)) {
-    stop(
-      "'comparative_importance' must be non-negative"
-    )
-  }
-
-  if (comparative_importance[1] != 0) {
-    stop(
-      "The first element of ",
-      "'comparative_importance' must be 0"
-    )
-  }
 
   # -----------------------------
   # 1) Coeficientes recalculados
