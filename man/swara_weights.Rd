@@ -54,7 +54,7 @@ result <- swara_weights(
   comparative_importance = s
 )
 
-result$result
+result$weights
 
 }
 \references{

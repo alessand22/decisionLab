@@ -51,7 +51,7 @@
 #'   comparative_importance = s
 #' )
 #'
-#' result$result
+#' result$weights
 #'
 #' @export
 
