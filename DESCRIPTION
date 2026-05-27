@@ -1,6 +1,7 @@
 Package: decisionLab
 Title: Multi-Criteria Decision Analysis Methods
 Version: 0.0.0.9000
+Date: 2026-05-27
 Authors@R:
     person("Alessandro", "Corrêa",
            email = "alessandro.correa@ifpa.com.br",
@@ -11,7 +12,7 @@ Description: Methods for multi-criteria decision analysis (MCDA),
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-Suggests: 
+Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
