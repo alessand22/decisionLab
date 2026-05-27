@@ -7,13 +7,13 @@ citEntry(
     as.person("Alessandro de Castro Corrêa")
   ),
   year     = "2026",
-  note     = "R package version 0.0.0.9000",
+  note     = "R package version 0.1.0",
   url      = "https://github.com/alessand22/decisionLab",
   textVersion =
     paste(
       "Corrêa, A. (2026).",
       "decisionLab: Multi-Criteria Decision Analysis Methods.",
-      "R package version 0.0.0.9000.",
+      "R package version 0.1.0.",
       "https://github.com/alessand22/decisionLab"
     )
 )
