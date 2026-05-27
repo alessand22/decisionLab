@@ -1,0 +1,19 @@
+citHeader("To cite decisionLab in publications use:")
+
+citEntry(
+  entry    = "Manual",
+  title    = "decisionLab: Multi-Criteria Decision Analysis Methods",
+  author   = personList(
+    as.person("Alessandro de Castro Corrêa")
+  ),
+  year     = "2026",
+  note     = "R package version 0.0.0.9000",
+  url      = "https://github.com/alessand22/decisionLab",
+  textVersion =
+    paste(
+      "Corrêa, A. (2026).",
+      "decisionLab: Multi-Criteria Decision Analysis Methods.",
+      "R package version 0.0.0.9000.",
+      "https://github.com/alessand22/decisionLab"
+    )
+)
