@@ -11,7 +11,7 @@ citEntry(
   url      = "https://github.com/alessand22/decisionLab",
   textVersion =
     paste(
-      "Corrêa, A. (2026).",
+      "Corrêa, A. C. (2026).",
       "decisionLab: Multi-Criteria Decision Analysis Methods.",
       "R package version 0.1.0.",
       "https://github.com/alessand22/decisionLab"
