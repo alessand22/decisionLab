@@ -1,6 +1,6 @@
 ---
-output: github_document
----
+
+## output: github_document
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
@@ -16,39 +16,164 @@ knitr::opts_chunk$set(
 # decisionLab
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
-The goal of decisionLab is to ...
+## Overview
+
+**decisionLab** is an R package for **Multi-Criteria Decision Analysis (MCDA)**. It provides methods for criterion weighting and alternative ranking, supporting researchers, students, and practitioners in solving complex decision-making problems.
+
+The package is designed for applications in:
+
+* Management
+* Healthcare
+* Engineering
+* Public Administration
+* Operations Research
+* Decision Support Systems
+
+The current version implements methods for both **criterion weighting** and **alternative ranking**.
+
+## Implemented Methods
+
+### Ranking Methods
+
+| Method | Description                                                    |
+| ------ | -------------------------------------------------------------- |
+| TOPSIS | Technique for Order Preference by Similarity to Ideal Solution |
+| SPOTIS | Stable Preference Ordering Towards Ideal Solution              |
+| SAW    | Simple Additive Weighting                                      |
+
+### Weighting Methods
+
+| Method  | Description                                      |
+| ------- | ------------------------------------------------ |
+| Entropy | Objective weighting based on information entropy |
+| MEREC   | Method based on the Removal Effects of Criteria  |
+| SWARA   | Step-wise Weight Assessment Ratio Analysis       |
+
+---
 
 ## Installation
 
-You can install the development version of decisionLab like so:
+Install the development version from GitHub:
 
-``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+```r
+pak::pak("alessand22/decisionLab")
 ```
 
-## Example
+Alternatively:
 
-This is a basic example which shows you how to solve a common problem:
+```r
+devtools::install_github("alessand22/decisionLab")
+```
 
-```{r example}
+---
+
+## Example: TOPSIS
+
+```r
 library(decisionLab)
-## basic example code
+
+data <- matrix(
+  c(
+    4, 7,
+    2, 9,
+    6, 5
+  ),
+  nrow = 3,
+  byrow = TRUE,
+  dimnames = list(
+    c("A1", "A2", "A3"),
+    c("C1", "C2")
+  )
+)
+
+result <- topsis(
+  data = data,
+  weights = c(0.5, 0.5),
+  benefit = c(TRUE, TRUE)
+)
+
+result$result
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+---
 
-```{r cars}
-summary(cars)
+## Example: SWARA
+
+```r
+library(decisionLab)
+
+criteria <- c(
+  "Cost",
+  "Quality",
+  "Risk",
+  "Time"
+)
+
+s <- c(
+  0,
+  0.20,
+  0.10,
+  0.30
+)
+
+result <- swara_weights(
+  criteria_order = criteria,
+  comparative_importance = s
+)
+
+result$result
 ```
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
+---
 
-You can also embed plots, for example:
+## Citation
 
-```{r pressure, echo = FALSE}
-plot(pressure)
+If you use **decisionLab** in academic research, please cite:
+
+> Corrêa, A. C. (2026). *decisionLab: Multi-Criteria Decision Analysis Methods* (Version 0.1.0) [R package]. https://github.com/alessand22/decisionLab
+
+You can also obtain the citation directly in R:
+
+```r
+citation("decisionLab")
 ```
 
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
+---
+
+## Author
+
+**Alessandro de Castro Corrêa**
+
+Federal Institute of Education, Science and Technology of Pará (IFPA)
+
+E-mail: [alessandro.correa@ifpa.com.br](mailto:alessandro.correa@ifpa.com.br)
+
+GitHub: https://github.com/alessand22
+
+Project repository:
+
+https://github.com/alessand22/decisionLab
+
+---
+
+## License
+
+This project is licensed under the MIT License.
+
+---
+
+## Roadmap
+
+Future releases are expected to include additional MCDA methods, such as:
+
+* CRITIC
+* VIKOR
+* COPRAS
+* AHP-Gaussian
+* BWM
+* SAPEVO-M
+
+The goal of **decisionLab** is to provide a comprehensive and user-friendly environment for Multi-Criteria Decision Analysis in R.
