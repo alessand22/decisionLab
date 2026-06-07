@@ -131,37 +131,60 @@ result$result
 
 ## Example: Group SWARA
 
+The example below illustrates Group SWARA using survey or spreadsheet
+data where each row represents one expert. Criterion columns contain
+rankings (1 = most important criterion), while `s` columns contain the
+SWARA comparative importance coefficients.
+
 ``` r
 library(decisionLab)
 
-experts <- list(
+data <- data.frame(
 
-  expert1 = list(
-    criteria_order =
-      c("Cost", "Quality", "Risk", "Time"),
-    comparative_importance =
-      c(0, 0.20, 0.10, 0.30)
+  Cost    = c(1, 2, 3),
+  Quality = c(2, 1, 2),
+  Risk    = c(3, 4, 1),
+  Time    = c(4, 3, 4),
+
+  s2 = c(
+    0.20,
+    0.15,
+    0.10
   ),
 
-  expert2 = list(
-    criteria_order =
-      c("Quality", "Cost", "Time", "Risk"),
-    comparative_importance =
-      c(0, 0.15, 0.20, 0.25)
+  s3 = c(
+    0.10,
+    0.20,
+    0.15
   ),
 
-  expert3 = list(
-    criteria_order =
-      c("Risk", "Quality", "Cost", "Time"),
-    comparative_importance =
-      c(0, 0.10, 0.15, 0.20)
+  s4 = c(
+    0.30,
+    0.25,
+    0.20
   )
 
 )
 
 result <- swara_group(
-  experts = experts,
+
+  data = data,
+
+  criteria_columns = c(
+    "Cost",
+    "Quality",
+    "Risk",
+    "Time"
+  ),
+
+  s_columns = c(
+    "s2",
+    "s3",
+    "s4"
+  ),
+
   aggregation = "mean"
+
 )
 
 result$result

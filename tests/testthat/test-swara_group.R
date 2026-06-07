@@ -1,263 +1,193 @@
-test_that("swara_group returns valid result with mean aggregation", {
+test_that(
+  "swara_group accepts valid data frame",
+  {
 
-  experts <- list(
+    data <- data.frame(
 
-    expert1 = list(
-      criteria_order =
-        c("Cost", "Quality", "Risk", "Time"),
-      comparative_importance =
-        c(0, 0.20, 0.10, 0.30)
-    ),
+      Cost =
+        c(1, 2, 3),
 
-    expert2 = list(
-      criteria_order =
-        c("Quality", "Cost", "Time", "Risk"),
-      comparative_importance =
-        c(0, 0.15, 0.20, 0.25)
+      Quality =
+        c(2, 1, 2),
+
+      Risk =
+        c(3, 4, 1),
+
+      Time =
+        c(4, 3, 4),
+
+      s2 =
+        c(0.20, 0.15, 0.10),
+
+      s3 =
+        c(0.10, 0.20, 0.15),
+
+      s4 =
+        c(0.30, 0.25, 0.20)
+
     )
 
-  )
-
-  result <- swara_group(
-    experts = experts,
-    aggregation = "mean"
-  )
-
-  expect_type(
-    result,
-    "list"
-  )
-
-  expect_equal(
-    result$method,
-    "SWARA Group"
-  )
-
-  expect_equal(
-    result$aggregation,
-    "mean"
-  )
-
-  expect_equal(
-    result$n_experts,
-    2
-  )
-
-  expect_equal(
-    sum(result$weights),
-    1,
-    tolerance = 1e-8
-  )
-
-})
-
-test_that("swara_group returns valid result with geometric aggregation", {
-
-  experts <- list(
-
-    expert1 = list(
-      criteria_order =
-        c("Cost", "Quality", "Risk", "Time"),
-      comparative_importance =
-        c(0, 0.20, 0.10, 0.30)
-    ),
-
-    expert2 = list(
-      criteria_order =
-        c("Quality", "Cost", "Time", "Risk"),
-      comparative_importance =
-        c(0, 0.15, 0.20, 0.25)
+    result <- swara_group(
+      data = data,
+      criteria_columns =
+        c(
+          "Cost",
+          "Quality",
+          "Risk",
+          "Time"
+        ),
+      s_columns =
+        c(
+          "s2",
+          "s3",
+          "s4"
+        )
     )
 
-  )
-
-  result <- swara_group(
-    experts = experts,
-    aggregation = "geometric"
-  )
-
-  expect_type(
-    result,
-    "list"
-  )
-
-  expect_equal(
-    result$aggregation,
-    "geometric"
-  )
-
-  expect_equal(
-    sum(result$weights),
-    1,
-    tolerance = 1e-8
-  )
-
-})
-
-test_that("swara_group rejects non-list experts", {
-
-  expect_error(
-
-    swara_group(
-      experts = c(1, 2, 3)
-    ),
-
-    "'experts' must be a list"
-
-  )
-
-})
-
-test_that("swara_group requires at least two experts", {
-
-  experts <- list(
-
-    expert1 = list(
-      criteria_order =
-        c("Cost", "Quality"),
-      comparative_importance =
-        c(0, 0.20)
+    expect_equal(
+      result$method,
+      "SWARA Group"
     )
 
-  )
-
-  expect_error(
-
-    swara_group(
-      experts = experts
-    ),
-
-    "Group SWARA requires at least two experts"
-
-  )
-
-})
-
-test_that("swara_group rejects experts without criteria_order", {
-
-  experts <- list(
-
-    expert1 = list(
-      comparative_importance =
-        c(0, 0.20)
-    ),
-
-    expert2 = list(
-      criteria_order =
-        c("Cost", "Quality"),
-      comparative_importance =
-        c(0, 0.20)
+    expect_equal(
+      sum(result$weights),
+      1,
+      tolerance = 1e-8
     )
 
-  )
+  }
+)
 
-  expect_error(
+test_that(
+  "swara_group rejects non data frame input",
+  {
 
-    swara_group(
-      experts = experts
-    ),
+    expect_error(
 
-    "must contain"
+      swara_group(
+        data = matrix(1:10),
+        criteria_columns =
+          c("C1", "C2"),
+        s_columns =
+          c("s2")
+      ),
 
-  )
+      "'data' must be a data.frame"
 
-})
-
-test_that("swara_group rejects experts without comparative_importance", {
-
-  experts <- list(
-
-    expert1 = list(
-      criteria_order =
-        c("Cost", "Quality")
-    ),
-
-    expert2 = list(
-      criteria_order =
-        c("Cost", "Quality"),
-      comparative_importance =
-        c(0, 0.20)
     )
 
-  )
+  }
+)
 
-  expect_error(
+test_that(
+  "swara_group rejects missing criteria columns",
+  {
 
-    swara_group(
-      experts = experts
-    ),
-
-    "must contain"
-
-  )
-
-})
-
-test_that("swara_group rejects different criterion sets", {
-
-  experts <- list(
-
-    expert1 = list(
-      criteria_order =
-        c("Cost", "Quality", "Risk"),
-      comparative_importance =
-        c(0, 0.20, 0.10)
-    ),
-
-    expert2 = list(
-      criteria_order =
-        c("Cost", "Quality", "Time"),
-      comparative_importance =
-        c(0, 0.20, 0.10)
+    data <- data.frame(
+      Cost = c(1, 2),
+      s2 = c(0.20, 0.15)
     )
 
-  )
+    expect_error(
 
-  expect_error(
+      swara_group(
+        data = data,
+        criteria_columns =
+          c(
+            "Cost",
+            "Quality"
+          ),
+        s_columns =
+          c("s2")
+      ),
 
-    swara_group(
-      experts = experts
-    ),
+      "criteria columns"
 
-    "All experts must evaluate"
-
-  )
-
-})
-
-test_that("swara_group returns weight matrix", {
-
-  experts <- list(
-
-    expert1 = list(
-      criteria_order =
-        c("Cost", "Quality", "Risk"),
-      comparative_importance =
-        c(0, 0.20, 0.10)
-    ),
-
-    expert2 = list(
-      criteria_order =
-        c("Quality", "Cost", "Risk"),
-      comparative_importance =
-        c(0, 0.15, 0.20)
     )
 
-  )
+  }
+)
 
-  result <- swara_group(
-    experts = experts
-  )
+test_that(
+  "swara_group rejects missing s columns",
+  {
 
-  expect_true(
-    is.matrix(
-      result$weight_matrix
+    data <- data.frame(
+      Cost = c(1, 2),
+      Quality = c(2, 1)
     )
-  )
 
-  expect_equal(
-    ncol(result$weight_matrix),
-    2
-  )
+    expect_error(
 
-})
+      swara_group(
+        data = data,
+        criteria_columns =
+          c(
+            "Cost",
+            "Quality"
+          ),
+        s_columns =
+          c("s2")
+      ),
+
+      "s_columns"
+
+    )
+
+  }
+)
+
+test_that(
+  "swara_group rejects invalid rankings",
+  {
+
+    data <- data.frame(
+
+      Cost =
+        c(1, 1),
+
+      Quality =
+        c(2, 2),
+
+      Risk =
+        c(2, 3),
+
+      Time =
+        c(4, 4),
+
+      s2 =
+        c(0.20, 0.15),
+
+      s3 =
+        c(0.10, 0.20),
+
+      s4 =
+        c(0.30, 0.25)
+
+    )
+
+    expect_error(
+
+      swara_group(
+        data = data,
+        criteria_columns =
+          c(
+            "Cost",
+            "Quality",
+            "Risk",
+            "Time"
+          ),
+        s_columns =
+          c(
+            "s2",
+            "s3",
+            "s4"
+          )
+      ),
+
+      "valid ranking"
+
+    )
+
+  }
+)

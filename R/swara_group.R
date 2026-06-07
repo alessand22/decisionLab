@@ -1,21 +1,20 @@
 #' Group Step-wise Weight Assessment Ratio Analysis (SWARA)
 #'
-#' Computes criterion weights using the Group SWARA method.
+#' Computes criterion weights using the Group SWARA method
+#' from survey or spreadsheet data where each row represents
+#' one expert.
 #'
-#' In this implementation, each expert may define a different
-#' criterion ordering and corresponding comparative importance
-#' coefficients. Individual SWARA weights are computed for each
-#' expert and aggregated into a group solution.
+#' Rankings are provided in the criterion columns
+#' (1 = most important criterion), while SWARA comparative
+#' importance coefficients are provided in separate columns.
 #'
-#' @param experts List of experts. Each element must contain:
-#' \describe{
-#'   \item{criteria_order}{Character vector with criteria names
-#'   ordered from most important to least important.}
-#'   \item{comparative_importance}{Numeric vector containing
-#'   comparative importance coefficients (\eqn{s_j}).}
-#' }
+#' @param data Data frame containing expert responses.
+#' @param criteria_columns Character vector containing
+#' criterion ranking columns.
+#' @param s_columns Character vector containing SWARA
+#' comparative importance columns.
 #' @param aggregation Aggregation method used to combine
-#' expert weights. Available options are:
+#' expert weights. Available options are
 #' \code{"mean"} and \code{"geometric"}.
 #'
 #' @return A list containing:
@@ -30,59 +29,46 @@
 #' }
 #'
 #' @details
-#' The Group SWARA procedure follows these steps:
-#' \enumerate{
-#'   \item Each expert ranks criteria independently.
-#'   \item Individual SWARA weights are computed.
-#'   \item Individual weights are aggregated using the
-#'   selected aggregation method.
-#'   \item Final group weights are normalized.
+#' Each row represents one expert.
+#'
+#' Criterion columns contain rankings:
+#' \itemize{
+#'   \item 1 = most important criterion
+#'   \item 2 = second most important criterion
+#'   \item ...
 #' }
 #'
-#' @references
-#' Keršuliene, V., Zavadskas, E. K., & Turskis, Z. (2010).
-#' Selection of rational dispute resolution method by
-#' applying new step-wise weight assessment ratio analysis
-#' (SWARA). Journal of Business Economics and Management,
-#' 11(2), 243-258.
+#' The function reconstructs the criterion ordering for
+#' each expert, computes individual SWARA weights and
+#' aggregates them into a group solution.
 #'
 #' @examples
-#' experts <- list(
-#'
-#'   expert1 = list(
-#'     criteria_order =
-#'       c("Cost", "Quality", "Risk", "Time"),
-#'     comparative_importance =
-#'       c(0, 0.20, 0.10, 0.30)
-#'   ),
-#'
-#'   expert2 = list(
-#'     criteria_order =
-#'       c("Quality", "Cost", "Time", "Risk"),
-#'     comparative_importance =
-#'       c(0, 0.15, 0.20, 0.25)
-#'   ),
-#'
-#'   expert3 = list(
-#'     criteria_order =
-#'       c("Risk", "Quality", "Cost", "Time"),
-#'     comparative_importance =
-#'       c(0, 0.10, 0.15, 0.20)
-#'   )
-#'
+#' data <- data.frame(
+#'   Cost    = c(1, 2, 3),
+#'   Quality = c(2, 1, 2),
+#'   Risk    = c(3, 4, 1),
+#'   Time    = c(4, 3, 4),
+#'   s2      = c(0.20, 0.15, 0.10),
+#'   s3      = c(0.10, 0.20, 0.15),
+#'   s4      = c(0.30, 0.25, 0.20)
 #' )
 #'
 #' result <- swara_group(
-#'   experts = experts,
-#'   aggregation = "mean"
+#'   data = data,
+#'   criteria_columns =
+#'     c("Cost", "Quality", "Risk", "Time"),
+#'   s_columns =
+#'     c("s2", "s3", "s4")
 #' )
 #'
-#' result$weights
+#' result$result
 #'
 #' @export
 
 swara_group <- function(
-    experts,
+    data,
+    criteria_columns,
+    s_columns,
     aggregation = "mean"
 ) {
 
@@ -90,188 +76,143 @@ swara_group <- function(
   # 0) Validações
   # -----------------------------
 
-  experts <- .validate_experts(
-    experts
-  )
+  if (!is.data.frame(data)) {
 
-  aggregation <- match.arg(
-    aggregation,
-    c("mean", "geometric")
-  )
-
-  # -----------------------------
-  # 1) SWARA individual
-  # -----------------------------
-
-  individual_results <- lapply(
-    experts,
-    function(expert) {
-
-      swara_weights(
-        criteria_order =
-          expert$criteria_order,
-        comparative_importance =
-          expert$comparative_importance
-      )
-
-    }
-  )
-
-  # -----------------------------
-  # 2) Verificar critérios
-  # -----------------------------
-
-  criteria_sets <- lapply(
-    individual_results,
-    function(x) sort(x$criteria)
-  )
-
-  if (!all(
-    vapply(
-      criteria_sets,
-      identical,
-      logical(1),
-      criteria_sets[[1]]
+    stop(
+      "'data' must be a data.frame"
     )
-  )) {
+
+  }
+
+  if (!is.character(criteria_columns)) {
+
+    stop(
+      "'criteria_columns' must be a character vector"
+    )
+
+  }
+
+  if (!is.character(s_columns)) {
+
+    stop(
+      "'s_columns' must be a character vector"
+    )
+
+  }
+
+  if (!all(criteria_columns %in% names(data))) {
+
+    stop(
+      "Some criteria columns were not found in 'data'"
+    )
+
+  }
+
+  if (!all(s_columns %in% names(data))) {
+
+    stop(
+      "Some s_columns were not found in 'data'"
+    )
+
+  }
+
+  n_criteria <- length(criteria_columns)
+
+  if (length(s_columns) != (n_criteria - 1)) {
 
     stop(
       paste(
-        "All experts must evaluate",
-        "the same set of criteria."
+        "The number of s_columns must be equal",
+        "to the number of criteria minus one."
       )
     )
 
   }
 
-  # -----------------------------
-  # 3) Critérios únicos
-  # -----------------------------
-
-  criteria <- criteria_sets[[1]]
-
-  # -----------------------------
-  # 4) Matriz de pesos
-  # -----------------------------
-
-  weight_matrix <- matrix(
-    0,
-    nrow = length(criteria),
-    ncol = length(individual_results),
-    dimnames = list(
-      criteria,
-      paste0(
-        "Expert_",
-        seq_along(individual_results)
-      )
+  aggregation <- match.arg(
+    aggregation,
+    c(
+      "mean",
+      "geometric"
     )
   )
 
-  for (i in seq_along(individual_results)) {
-
-    result_i <- individual_results[[i]]
-
-    weight_matrix[
-      result_i$criteria,
-      i
-    ] <- result_i$weights
-
-  }
-
   # -----------------------------
-  # 5) Agregação
+  # 1) Construir lista experts
   # -----------------------------
 
-  if (aggregation == "mean") {
+  experts <- vector(
+    mode = "list",
+    length = nrow(data)
+  )
 
-    weights <- rowMeans(
-      weight_matrix
+  for (i in seq_len(nrow(data))) {
+
+    ranks <- as.numeric(
+      unlist(
+        data[i, criteria_columns]
+      )
     )
 
-  } else {
+    if (any(is.na(ranks))) {
 
-    if (any(weight_matrix == 0)) {
-
-      warning(
+      stop(
         paste(
-          "Geometric aggregation detected one or more",
-          "zero weights.",
-          "These values were replaced by",
-          ".Machine$double.eps to avoid",
-          "numerical problems in logarithmic",
-          "transformation."
-        ),
-        call. = FALSE
+          "Missing ranking value detected",
+          "in row",
+          i
+        )
       )
 
     }
 
-    weights <- apply(
-      weight_matrix,
-      1,
-      function(x) {
+    if (!setequal(
+      ranks,
+      seq_len(n_criteria)
+    )) {
 
-        exp(
-          mean(
-            log(
-              pmax(
-                x,
-                .Machine$double.eps
-              )
-            )
-          )
+      stop(
+        paste(
+          "Row",
+          i,
+          "must contain a valid ranking",
+          "from 1 to",
+          n_criteria
         )
+      )
 
-      }
+    }
+
+    criteria_order <-
+      criteria_columns[
+        order(ranks)
+      ]
+
+    s_values <- c(
+      0,
+      as.numeric(
+        unlist(
+          data[i, s_columns]
+        )
+      )
+    )
+
+    experts[[i]] <- list(
+      criteria_order =
+        criteria_order,
+      comparative_importance =
+        s_values
     )
 
   }
 
   # -----------------------------
-  # 6) Normalização
+  # 2) Executar engine
   # -----------------------------
 
-  weights <- weights / sum(weights)
-
-  # -----------------------------
-  # 7) Resultado
-  # -----------------------------
-
-  result <- data.frame(
-    Criterion = names(weights),
-    Weight = round(
-      weights,
-      6
-    )
-  )
-
-  result <- result[
-    order(
-      result$Weight,
-      decreasing = TRUE
-    ),
-  ]
-
-  rownames(result) <- NULL
-
-  # -----------------------------
-  # 8) Retorno
-  # -----------------------------
-
-  return(
-    list(
-      method = "SWARA Group",
-      aggregation = aggregation,
-      n_experts = length(experts),
-      individual_results =
-        individual_results,
-      weight_matrix =
-        weight_matrix,
-      weights =
-        weights,
-      result =
-        result
-    )
+  .swara_group_engine(
+    experts = experts,
+    aggregation = aggregation
   )
 
 }
