@@ -1,17 +1,5 @@
----
-output: github_document
----
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.path = "man/figures/README-",
-  out.width = "100%"
-)
-```
 
 # decisionLab
 
@@ -21,25 +9,30 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-**decisionLab** is an R package for **Multi-Criteria Decision Analysis (MCDA)**. It provides methods for criterion weighting and alternative ranking, supporting researchers, students, and practitioners in solving complex decision-making problems.
+**decisionLab** is an R package for **Multi-Criteria Decision Analysis
+(MCDA)**. It provides methods for criterion weighting and alternative
+ranking, supporting researchers, students, and practitioners in solving
+complex decision-making problems.
 
 The package is designed for applications in:
 
-* Management
-* Healthcare
-* Engineering
-* Public Administration
-* Operations Research
-* Decision Support Systems
+- Management
+- Healthcare
+- Engineering
+- Public Administration
+- Operations Research
+- Decision Support Systems
 
-The current version implements methods for both **criterion weighting** and **alternative ranking**, including support for **group decision-making** through Group SWARA.
+The current version implements methods for both **criterion weighting**
+and **alternative ranking**, including support for **group
+decision-making** through Group SWARA.
 
 ## Implemented Methods
 
 ### Ranking Methods
 
 | Method | Description                                                    |
-| ------ | -------------------------------------------------------------- |
+|--------|----------------------------------------------------------------|
 | TOPSIS | Technique for Order Preference by Similarity to Ideal Solution |
 | SPOTIS | Stable Preference Ordering Towards Ideal Solution              |
 | SAW    | Simple Additive Weighting                                      |
@@ -47,39 +40,39 @@ The current version implements methods for both **criterion weighting** and **al
 ### Weighting Methods
 
 | Method  | Description                                      |
-| ------- | ------------------------------------------------ |
+|---------|--------------------------------------------------|
 | Entropy | Objective weighting based on information entropy |
 | MEREC   | Method based on the Removal Effects of Criteria  |
 | SWARA   | Step-wise Weight Assessment Ratio Analysis       |
 
 ### Group Weighting Methods
 
-| Method      | Description                                                                         |
-| ----------- | ----------------------------------------------------------------------------------- |
+| Method | Description |
+|----|----|
 | SWARA Group | Group SWARA with support for multiple experts and aggregation of individual weights |
 
----
+------------------------------------------------------------------------
 
 ## Installation
 
 Install the development version from GitHub:
 
-```r
+``` r
 install.packages("pak")
 pak::pak("alessand22/decisionLab")
 ```
 
 Alternatively:
 
-```r
+``` r
 devtools::install_github("alessand22/decisionLab")
 ```
 
----
+------------------------------------------------------------------------
 
 ## Example: TOPSIS
 
-```r
+``` r
 library(decisionLab)
 
 data <- matrix(
@@ -105,11 +98,11 @@ result <- topsis(
 result$result
 ```
 
----
+------------------------------------------------------------------------
 
 ## Example: SWARA
 
-```r
+``` r
 library(decisionLab)
 
 criteria <- c(
@@ -134,11 +127,11 @@ result <- swara_weights(
 result$result
 ```
 
----
+------------------------------------------------------------------------
 
 ## Example: Group SWARA
 
-```r
+``` r
 library(decisionLab)
 
 experts <- list(
@@ -174,22 +167,23 @@ result <- swara_group(
 result$result
 ```
 
----
+------------------------------------------------------------------------
 
 ## Citation
 
 If you use **decisionLab** in academic research, please cite:
 
-> Corrêa, A. C. (2026). *decisionLab: Multi-Criteria Decision Analysis Methods* (Version 0.1.0) [R package]. <https://github.com/alessand22/decisionLab>
-
+> Corrêa, A. C. (2026). *decisionLab: Multi-Criteria Decision Analysis
+> Methods* (Version 0.1.0) \[R package\].
+> <https://github.com/alessand22/decisionLab>
 
 You can also obtain the citation directly in R:
 
-```r
+``` r
 citation("decisionLab")
 ```
 
----
+------------------------------------------------------------------------
 
 ## Author
 
@@ -197,7 +191,7 @@ citation("decisionLab")
 
 Federal Institute of Education, Science and Technology of Pará (IFPA)
 
-E-mail: [alessandro.correa@ifpa.com.br](mailto:alessandro.correa@ifpa.com.br)
+E-mail: <alessandro.correa@ifpa.com.br>
 
 GitHub: <https://github.com/alessand22>
 
@@ -205,23 +199,25 @@ Project repository:
 
 <https://github.com/alessand22/decisionLab>
 
----
+------------------------------------------------------------------------
 
 ## License
 
 This project is licensed under the MIT License.
 
----
+------------------------------------------------------------------------
 
 ## Roadmap
 
-Future releases are expected to include additional MCDA methods, such as:
+Future releases are expected to include additional MCDA methods, such
+as:
 
-* CRITIC
-* VIKOR
-* COPRAS
-* AHP-Gaussian
-* BWM
-* SAPEVO-M
+- CRITIC
+- VIKOR
+- COPRAS
+- AHP-Gaussian
+- BWM
+- SAPEVO-M
 
-The goal of **decisionLab** is to provide a comprehensive and user-friendly environment for Multi-Criteria Decision Analysis in R.
+The goal of **decisionLab** is to provide a comprehensive and
+user-friendly environment for Multi-Criteria Decision Analysis in R.

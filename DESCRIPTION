@@ -7,7 +7,7 @@ Authors@R:
            email = "alessandro.correa@ifpa.com.br",
            role = c("aut", "cre"))
 Description: Methods for multi-criteria decision analysis (MCDA),
-    including TOPSIS, SPOTIS, SAW, Entropy, MEREC, and SWARA methods
+    including TOPSIS, SPOTIS, SAW, Entropy, MEREC, SWARA, and Group SWARA methods
     for ranking alternatives and determining objective criterion weights.
 License: MIT + file LICENSE
 Encoding: UTF-8
